@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="vscode-theme.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"
+    integrity="sha512-YeeA/Qxn5hYdkukScTCNNOhTrv1C2RubAGButJ1rmgQwZf/HdRaCGl+JAVkqsqaNRaYNHdheiuKKuPf9mDcqKg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/9000.0.1/prism.min.js"
+    integrity="sha512-UOoJElONeUNzQbbKQbjldDf9MwOHqxNz49NNJJ1d90yp+X9edsHyJoAs6O4K19CZGaIdjI5ohK+O2y5lBTW6uQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+
+<body>
+  <div>
+    <form action="/signup" method="post" id="signupForm" onsubmit="onSubmit(event)">
+      <input type="phone" name="phone" placeholder="phone" required value="123">
+      <input type="password" name="password" placeholder="password" required value="123">
+      <input type="submit" value="Sign up">
+    </form>
+  </div>
+  <div>
+    <form action="/signin" method="post" id="signinForm" onsubmit="onSubmit(event)">
+      <input type="phone" name="phone" placeholder="phone" required value="123">
+      <input type="password" name="password" placeholder="password" required value="123">
+      <input type="submit" value="Sign in">
+    </form>
+  </div>
+  <div style="display: none">
+    <form action="/portal-signin" method="post" id="portalSigninForm" onsubmit="onSubmit(event)">
+      <input type="phone" name="phone" placeholder="phone" required value="0986366533">
+      <input type="password" name="password" placeholder="password" required value="qazxsw12345678">
+      <input type="hidden" name="recaptcha"
+        value="03AEkXODBnkya6r_2XlkWz3WdyQHc4oq4I68ZOMoKP6Lmy3_hG55dWkkEetoMk0zXwu8FLqcfJ1QIS6CtnioX9YXJ5HSr_dwR5yi4tdddckyycAlgUWCQ26w5k5S3QE4aNV0fnzXEOTPaEupuI8hLrp-BiRzI9XNMovF3HC8rHz4xCWZz9PY5hIhg6Mazgy-O0DykBaf6RolodbzZ8mbJiDOgzFPAOgPsn6I9z9X3ne6hb3To_XdmkCDygnN40lN8sFU4KxcmDMDqp_4QyBpcJbotriiUquwWa1PEu33E9LlhxRgAGhmU7g6ovfuvL-liSF2LhycvI5VyEd3_czFtQoGoYqheFNwhhEdVuBqymSa-0T3Lf-bMwLXTaR1uWP8xLfHHfnG5h1fsZLh093KeQLCCgHtm-fbVhApNHM2_X2NjtP6jPlyvZRXJW2oNoLIQfkmqasbtj_1XY28gxwCxioCV2XcVwqi6dZoQL9aSiLIq434-hyk2S_ApKaIzCDYGywG1tF7YIHn2QUI3tgVdBOKohtWUJqS9Oew">
+      <input type="hidden" name="site" value="TEST">
+      <input type="submit" value="Sign in">
+    </form>
+  </div>
+
+  <div>
+    <button onclick="getUser()">Get users</button>
+    <button onclick="signout()">Sign out</button>
+    <button onclick="getData()">Data</button>
+    <button onclick="getSID()">SID</button>
+    <button onclick="hi()">HI</button>
+    <button onclick="listSockets()">SOCKETS</button>
+  </div>
+
+  <div class="console">
+    <pre><code class="language-javascript result">{"name": "Kay Briyel"}</code></pre>
+  </div>
+
+  <!-- variables -->
+  <script>
+    const protocol = 'http://'
+
+    const apiHost = 'localhost:8081'
+    const socketHost = 'localhost:8083'
+
+    const apiUrl = protocol + apiHost
+    const socketUrl = protocol + socketHost
+
+    function logResult(result) {
+      console.log(result)
+      document.querySelector('.console .result').innerHTML = JSON.stringify(result, null, 2)
+      Prism.highlightAll()
+    }
+  </script>
+
+  <!-- engine -->
+  <script>
+
+    async function onSubmit(e) {
+      e.preventDefault()
+      const form = e.target
+      const body = JSON.stringify(Object.fromEntries(new FormData(form)))
+      const res = await fetch(form.action.replace(location.host, apiHost), {
+        method: form.method,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        credentials: "include",
+        body
+      })
+      const json = await res.json()
+      logResult(json)
+    }
+
+    async function getUser() {
+      const res = await fetch(`${apiUrl}/users`, {
+        credentials: "include"
+      })
+      const users = await res.json()
+      logResult(users)
+      users.forEach(u => console.info(u))
+    }
+
+    async function getSID() {
+      const res = await fetch(`${apiUrl}/sid`, {
+        credentials: "include"
+      })
+      logResult(await res.json())
+    }
+
+    async function getData() {
+      const res = await fetch(`${apiUrl}/data`, {
+        method: 'post',
+        credentials: "include"
+      })
+      logResult(await res.json())
+    }
+
+    async function signout() {
+      const res = await fetch(`${apiUrl}/signout`, {
+        headers: {
+          Authorization: 'Bearer'
+        },
+        credentials: "include",
+        method: 'post'
+      })
+      logResult(await res.json())
+    }
+
+  </script>
+
+  <!-- socket -->
+  <script>
+
+    const socket = io(socketUrl)
+    socket.on('connect', () => {
+      logResult({ message: 'Connected to socket' })
+    })
+
+    socket.on('hi', () => {
+      socket.emit('hi')
+      logResult({ message: 'hi from server' })
+    })
+
+    function hi() {
+      socket.emit('test')
+    }
+
+    async function listSockets() {
+      const res = await fetch(`${socketUrl}/sockets`, {
+        headers: {
+          Authorization: 'Bearer'
+        },
+        credentials: "include"
+      })
+      logResult(await res.json())
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  #===========================>> Api
+  api:
+    image: node-auth-service-api
+    ports:
+      - 8082:8082
+    volumes: 
+      - ./api/src:/usr/app/src
+    deploy:
+      mode: replicated
+      replicas: 2

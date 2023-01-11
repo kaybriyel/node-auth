@@ -1,0 +1,53 @@
+version: "3.8"
+services:
+  #===========================>> Api
+  # api:
+  #   build:
+  #     context: ./api/.
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8082:8082
+  #   volumes: 
+  #     - ./api/src:/usr/app/src
+  #   networks:
+  #     - node-auth
+
+  #===========================>> Engine
+  engine:
+    image: node-auth-service-engine
+    ports:
+      - 8081:8081
+    volumes: 
+      - ./engine/src:/usr/app/src
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - node_auth
+networks:
+  node_auth:
+    driver: overlay  
+  
+  #===========================>> SOCKET
+  # socket:
+  #   build:
+  #     context: ./socket/.
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8083:8083
+  #   volumes: 
+  #     - ./socket/src:/usr/app/src
+  #   networks:
+  #     - node-auth
+
+  #===========================>> Cache
+  # cache:
+  #   image: redis:6.2-alpine
+  #   ports:
+  #     - 6379:6379
+  #   volumes: 
+  #     - ./cache:/data
+  #   networks:
+  #     - node-auth
+# networks:
+#   node-auth:
