@@ -36,5 +36,3 @@ By default, engine saves session-cookie into redis cache whenever the portal int
 ## sockets
 - GET   : portal -> socket
 - RES   : socket -> portal
-
-## added auto deploy
