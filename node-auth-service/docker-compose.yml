@@ -2,16 +2,15 @@ version: "3.8"
 services:
   #===========================>> Api
   api:
-    # build:
-    #   context: ./api/.
-    #   dockerfile: Dockerfile
-    image: node-auth-service-api
+    build:
+      context: ./api/.
+      dockerfile: Dockerfile
     ports:
       - 8082:8082
+    environment:
+      PORT: 8082
     volumes: 
       - ./api/src:/usr/app/src
-    networks:
-      - node-auth_node-auth
 
   #===========================>> Engine
   engine:
@@ -20,10 +19,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8081:8081
+    environment:
+      PORT: 8081
+      REDIS_IP: cache
+      REDIS_PORT: 6379
+      API_IP: api
+      API_PORT: 8082
     volumes: 
       - ./engine/src:/usr/app/src
-    networks:
-      - node-auth_node-auth
+
   #===========================>> SOCKET
   socket:
     build:
@@ -31,10 +35,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8083:8083
+    environment:
+      PORT: 8083
+      REDIS_IP: cache
+      REDIS_PORT: 6379
     volumes: 
       - ./socket/src:/usr/app/src
-    networks:
-      - node-auth_node-auth
+
   #===========================>> Cache
   cache:
     image: redis:6.2-alpine
@@ -42,8 +49,3 @@ services:
       - 6379:6379
     volumes: 
       - ./cache:/data
-    networks:
-      - node-auth_node-auth
-networks:
-  node-auth_node-auth:
-    external: true

@@ -1,2 +1,2 @@
 import portal from './http-server'
-portal.run(8080)
+portal.run(Number(process.env.PORT))

@@ -1,13 +1,13 @@
 import IoRedis, { RedisOptions } from 'ioredis'
 
-const sessionOptions: RedisOptions = {
-  host: '192.168.158.42',
-  port: 6379,
+const options: RedisOptions = {
+  host: process.env.REDIS_IP,
+  port: Number(process.env.REDIS_PORT),
 }
 
 // option of session;
 export function sessionClient() {
-  const sessionClient = new IoRedis(sessionOptions);
+  const sessionClient = new IoRedis(options);
 
   sessionClient.on('error', (err: Error) => {
     console.error('Session Redis error: ' + err);

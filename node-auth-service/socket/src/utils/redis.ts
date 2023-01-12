@@ -1,8 +1,8 @@
 import IoRedis, { RedisOptions } from 'ioredis'
 
 const options: RedisOptions = {
-  host: 'cache',
-  port: 6379,
+  host: process.env.REDIS_IP,
+  port: Number(process.env.REDIS_PORT),
 }
 
 // option of session;

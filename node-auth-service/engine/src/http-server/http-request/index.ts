@@ -34,7 +34,7 @@ export default function sendRequest(req: Request) {
                 })
             }
         }
-        const url = `http://api:8082${req.url}`
+        const url = `http://${process.env.API_IP}:${process.env.API_PORT}${req.url}`
         console.log(req.method, url)
         const fetch = new FetchStream(url, options)
 

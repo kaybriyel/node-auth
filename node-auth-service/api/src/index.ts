@@ -1,2 +1,2 @@
 import api from './http-server/index'
-api.run(8082)
+api.run(Number(process.env.PORT))

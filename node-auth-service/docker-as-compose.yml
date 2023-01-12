@@ -1,3 +1,4 @@
+# docker stack deploy --compose-file docker-as-compose.yml node-auth-service
 version: "3.8"
 services:
   #===========================>> Api
@@ -7,6 +8,17 @@ services:
       - 8082:8082
     volumes: 
       - ./api/src:/usr/app/src
+    deploy:
+      mode: replicated
+      replicas: 2
+
+  #===========================>> Socket
+  socket:
+    image: node-auth-service-socket
+    ports:
+      - 8083:8083
+    volumes: 
+      - ./socket/src:/usr/app/src
     deploy:
       mode: replicated
       replicas: 2

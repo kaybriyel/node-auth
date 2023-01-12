@@ -1,3 +1,4 @@
+# docker stack deploy --compose-file docker-es-compose.yml node-auth-service
 version: "3.8"
 services:
 
@@ -8,15 +9,12 @@ services:
       - 8081:8081
     volumes: 
       - ./engine/src:/usr/app/src
+    environment:
+      PORT: 8081
+      REDIS_IP: 192.168.43.145
+      REDIS_PORT: 6379
+      API_IP: 192.168.43.145
+      API_PORT: 8082
     deploy:
       mode: replicated
       replicas: 2
-    networks:
-      - engine
-networks:
-  # node_auth:
-    # driver: overlay
-    # external: true
-
-  engine:
-    # external: true
