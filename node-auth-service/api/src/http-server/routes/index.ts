@@ -1,4 +1,5 @@
 import express from 'express'
+import { redisClient } from '../../utils/redis';
 import User from '../models/user'
 
 const childProcessExec = require('child_process').exec;
@@ -6,12 +7,19 @@ const util = require('util');
 const exec = util.promisify(childProcessExec);
 
 const router = express.Router()
+
 let count = 0
+
 router.get('/', async (req, res) => {
-    console.log('*** count', count++)
+    const client = redisClient()
+    const rcount = await client.get('count') || 0
+    await client.set('count', Number(rcount)+1)
+
+    console.log('*** count', count)
     return res.send(`
     <h3>API</h3>
-    <h4>${count}</h4>
+    <h4>server count:${count++}</h4>
+    <h4>redis count :${rcount}</h4>
     `).end()
 })
 

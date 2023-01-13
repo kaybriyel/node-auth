@@ -9,6 +9,8 @@ services:
       - 8082:8082
     environment:
       PORT: 8082
+      REDIS_IP: 192.168.156.139
+      REDIS_PORT: 6379
     volumes: 
       - ./api/src:/usr/app/src
 
@@ -44,7 +46,7 @@ services:
 
   #===========================>> Cache
   cache:
-    image: redis:6.2-alpine
+    image: redis
     ports:
       - 6379:6379
     volumes: 

@@ -15,6 +15,10 @@ function init() {
     app.use(logRequestMiddleware)
     app.use(bodyParser.json())
 
+    app.get('/', (req, res) => {
+        res.end(`<h1>SOCKET</h1>`)
+    })
+
     app.get('/sockets', async (req, res) => {
         const s = req.session as any
         if (!s.user) return res.status(401).json({ message: 'Please login!' })
